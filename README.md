@@ -1,6 +1,5 @@
 # Medical-Website
 
-Medical Website			                                                                   		  Dec 2016
 •	Created a web-based application dashboard UI to display info of prostate cancer patients
 •	Enhanced the dashboard with user interactivity such as charts and graphs
 •	Utilized Django framework for backend and Bootstrap, jQuery, and Highcharts for front-end
