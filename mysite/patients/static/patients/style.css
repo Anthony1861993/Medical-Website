@@ -1,0 +1,258 @@
+li a {
+    color: green;
+}
+
+body {
+    /*background: white url("images/background2.gif") no-repeat right bottom;*/
+
+    background-image:url("images/background.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+
+    font-family: "Lato", sans-serif;
+}
+
+.mynav {
+    background-color: #595959;
+    color: #ffffff;
+    list-style: none;
+    text-align: center;
+    padding: 20px 0 20px 0;
+}
+
+.mynav li {
+    display: inline-block;
+    padding: 0 25px 0 25px;
+}
+
+.mynav li a {
+    text-decoration: none;
+    color: #ffffff;
+
+}
+
+.mynav li a:hover {
+    color: #c1c1c1;
+}
+
+.logo {
+    float: left;
+    padding-left: 25px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.banner {
+    width: 100%;
+    display: block;
+}
+
+.banner .banner-image {
+    width: 100%;
+    height: 80%;
+    display: block;
+}
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    /*background-color: #7D3C98;*/
+    background-image:url("images/sideNavBackground.jpg");
+    background-repeat:no-repeat;
+    background-size:cover;
+
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+
+.sidenav input {
+    display: block;
+    float: left;
+    margin: 0 10px 10px 0;
+    transition: 0.3s
+}
+.sidenav label {
+    display: block;
+    float: left;
+    margin: 0 10px 10px 0;
+    transition: 0.3s
+}
+
+
+.sidenav .outer-div {
+    width: 200px;
+    display: block;
+    float: left;
+    margin: 0 10px 10px 0;
+    transition: 0.3s
+    
+}
+
+.sidenav .slider-range {
+    width: 200px;
+    display: block;
+    float: left;
+    margin: 0 5px 5px 10px;
+    transition: 0.3s
+    
+}
+
+.sidenav .myDiv {
+    width: 200px;
+    display: block;
+    float: right;
+    margin: 0 5px 5px 10px;
+    transition: 0.3s
+
+}
+
+.sidenav .form-group {
+    width: 250px;
+    display: block;
+    float: left;
+    margin: 0 5px 5px 10px;
+    transition: 0.3s
+}
+
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+.loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url('images/loader.gif') 50% 50% no-repeat rgb(249,249,249);
+    /* alternative: https://s-media-cache-ak0.pinimg.com/originals/e0/f5/a5/e0f5a5f8c2e378df4fddd75e26e9a5a3.gif */
+}
+
+
+/*
+#slider-range1 {
+    display: block;
+    float: left;
+    width: 100px;
+    height: 10px;
+    margin: 0 10px 10px 0;
+    
+}
+*/
+
+/*
+ul.search1 input {
+    float: left;
+    margin: 0 10px 10px 0;
+}
+
+ul.search1 div {float: left;}
+*/
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+    padding: 2px 5px;
+    background-color: blue;
+    color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-body img {
+    float: left;
+    border: 5px solid black;
+    margin: 10px 50px 10px 10px;
+}
+
+.modal-body ul {
+    float: center;
+}
+
+
+#sliders table tr {
+  float: left;
+}

@@ -1,0 +1,862 @@
+<html>
+
+<head>
+	{% load static %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'patients/style.css' %}" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" type="text/javascript"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-more.js"></script>
+	<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+	<script src="https://code.highcharts.com/modules/exporting.js"></script>
+	
+  	<script src="{% static 'patients/dark-unica.js' %}" type="text/javascript"></script>
+	
+  	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>		
+
+	<!-- This the loader image when the page is loading --> 
+	<div class="loader"></div>
+
+	<!-- This is "Patient Info" popup window -->
+	<div id="myModal" class="modal">
+		<div class="modal-dialog modal-md">
+    	<div class="modal-content">
+    		<div class="modal-header" id="modalHeader">
+      			<span class="close" >&times;</span>
+      			<!-- <h2 id="myHeader">Modal Header</h2> -->
+    		</div>
+    		<div class="modal-body" id="modalBody">
+    			<!--
+    			<img src="{% static 'patients/images/background.gif' %}" alt="Mountain View" style="width:200px;height:150px;">
+    			<ul>
+      				<li><p>Some text in the Modal Body</p></li>
+      				<li><p>Some other text...</p></li>
+      			</ul>
+      			-->
+    		</div>
+    	</div>
+    	</div>
+	</div>
+
+	<!-- This is the top navigation bar, only used for display in this assignment -->
+	<ul class="mynav">
+		<div class="logo">LOGO </div>
+		<li><a href="#">Home</a></li>
+		<li><a href="#">About</a></li>
+  		<li><a href="#">Services</a></li>
+  		<li><a href="#">Clients</a></li>
+  		<li><a href="#">Contact</a></li>
+	</ul>
+
+	<!-- This is the banner image -->
+	<div class="banner">
+		<img class="banner-image" src="{% static 'patients/images/banner.jpg' %}">
+	</div>
+	
+	<!-- This is the side navigation bar -->
+	<div id="mySidenav" class="sidenav">
+  		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+  		
+  		<!-- Search box --> 
+  		<form class="form-inline" role="form">
+   			<div class="form-group">
+     			<input type="text" class="form-control" name="myPatientID" placeholder="Search by patient ID..." style="width: 70%">
+     			<button type="submit" class="btn btn-sm"><span class="glyphicon glyphicon-search" style="font-size:24px; height:25px;"></span></button>
+  			</div>
+		</form>
+  		
+		<!-- PSA, prostate_vol, lesion_size, etc --> 
+  		<form id="myForm" action="{% url 'patients:index' %}" method="get">
+			
+			<!-- PSA -->
+			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">PSA: </span>
+    			<input type="text" class="form-control" size="1" id="minPSA" name="myMinPSA">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxPSA" name="myMaxPSA" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range1" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- Prostate Vol -->
+  			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">Prostate Vol: </span>
+    			<input type="text" class="form-control" size="1" id="minProstateVol" name="myMinProstateVol">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxProstateVol" name="myMaxProstateVol" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range2" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- Lesion Size -->
+  			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">Lesion Size: </span>
+    			<input type="text" class="form-control" size="1" id="minLesionSize" name="myMinLesionSize">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxLesionSize" name="myMaxLesionSize" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range3" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- Sector -->
+  			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">Sector: </span>
+    			<input type="text" class="form-control" size="1" id="minSector" name="myMinSector">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxSector" name="myMaxSector" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range4" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- PIRADS score -->
+  			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">PIRADS score: </span>
+    			<input type="text" class="form-control" size="1" id="minPIRADSscore" name="myMinPIRADSscore">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxPIRADSscore" name="myMaxPIRADSscore" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range5" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- GLEASON score -->
+  			<div class="input-group" style="width: 85%">
+				<span class="input-group-addon">GLEASON score: </span>
+    			<input type="text" class="form-control" size="1" id="minGLEASONscore" name="myMinGLEASONscore">
+    			<span class="input-group-addon">to </span>
+    			<input type="text" class="form-control" size="1" id="maxGLEASONscore" name="myMaxGLEASONscore" >
+			</div>
+			<br>
+			<div class="outer-div">
+  				<div id="slider-range6" class="slider-range" onclick="SubmitFunction()" display="block"></div>
+  			</div>
+
+  			<!-- Submit button -->
+  			<div class="myDiv" >
+  				<button type="submit" class="btn btn-default">Submit</button>
+  				<button type="submit" class="btn btn-default" onclick="clearForm()">Clear</button>
+  			</div> 
+				
+		</form>
+	</div>
+
+	<!-- Click to open the side navigation bar --> 
+	<span style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776; Search/ Filter</span>
+
+
+	<!-- This is the tab bar --> 
+	<div class="container" id="tabs">
+  		<ul class="nav nav-tabs" id="myTab">
+    		<li class="active"><a data-toggle="tab" href="#home">Summary</a></li>
+    		<li><a data-toggle="tab" href="#menu1">Raw Data</a></li>
+  		</ul>
+
+  		<div class="tab-content" >
+    		<div id="home" class="tab-pane fade in active">
+      			<h3>Data Summary</h3>
+      			<!-- Graph for PSA -->
+      			<div id="container1" style="width:100%; height:400px; margin: 10px 0 10px 0;"></div>
+      			<button id="plain">Plain</button>
+				<button id="inverted">Inverted</button>
+				<button id="polar">Polar</button>
+				
+				<!-- Graph for Prostate Vol --> 
+				<div id="container2" style="width:100%; height:400px; margin: 10px 0 10px 0;"></div>
+				<div id="sliders">
+    				<table>
+        				<tr>
+        					<td>Alpha Angle</td>
+        					<td><input id="alpha" type="range" min="0" max="45" value="15"/> <span id="alpha-value" class="value"></span></td>
+        				</tr>
+        				<tr>
+        					<td>Beta Angle</td>
+        					<td><input id="beta" type="range" min="-45" max="45" value="15"/> <span id="beta-value" class="value"></span></td>
+        				</tr>
+        				<tr>
+        					<td>Depth</td>
+        					<td><input id="depth" type="range" min="20" max="100" value="50"/> <span id="depth-value" class="value"></span></td>
+        				</tr>
+    				</table>
+				</div>
+
+				<!-- Pie chart for Sector -->
+				<div id="container3" style="width:100%; height:400px; margin: 10px 0 10px 0;"></div>
+
+				<!-- Bubble chart for PSA, Prostate Vol vs. Tumor Size -->
+				<div id="container4" style="width:100%; height:400px; margin: 10px 0 10px 0;"></div>
+
+    		</div>
+    		<div id="menu1" class="tab-pane fade">
+      			<div class="container">
+  					<h3>Data Table</h3>            
+  					<table class="table">
+    					<thead>
+      					<tr>
+        					<th>Patient ID</th>
+        					<th>PSA</th>
+        					<th>Prostate Volume</th>
+        					<th>Lesion Size</th>
+        					<th>Sector</th>
+        					<th>PIRADS score</th>
+        					<th>GLEASON score</th>
+      					</tr>
+    					</thead>
+    					<tbody id="myTbody">
+    					
+    					</tbody>
+  					</table>
+				</div>
+    		</div>
+  		</div>
+	</div>
+
+	<!-- JavaScript codes --> 
+
+	<script>
+		myTbody = document.getElementById("myTbody");
+		{% for i in patientList %}
+			var myTuple = document.createElement('tr');
+			myTuple.innerHTML = 
+					'<td>' + {{i.id}} + '</td>'
+					+ '<td>' + {{i.PSA}} + '</td>'
+					+ '<td>' + {{i.prostate_vol}} + '</td>'
+					+ '<td>' + {{i.lesion_size}} + '</td>'
+					+ '<td>' + {{i.sector}} + '</td>'
+					+ '<td>' + {{i.PIRADS_score}} + '</td>'
+					+ '<td>' + {{i.GLEASON_score}} + '</td>';
+			myTbody.appendChild(myTuple);
+		{% endfor %}
+
+
+		// The function to send the form to retrieve user inputs 
+		function SubmitFunction() {
+			document.getElementById("myForm").submit();
+		}
+		function clearForm() {
+    		document.getElementById("myForm").reset();
+    		SubmitFunction();
+		}
+
+  		// This is for the loader 
+		$(window).load(function() {
+			$(".loader").fadeOut("slow");
+		})
+
+		var modal = document.getElementById('myModal');
+
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+			clearPatientInfo();
+    		modal.style.display = "none";
+		}
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+    		if (event.target == modal) {
+    			clearPatientInfo();
+        		modal.style.display = "none";
+    		}
+		}
+
+		// This is for side navigation bar
+		function openNav() {
+    		document.getElementById("mySidenav").style.width = "300px";
+		}
+		function closeNav() {
+    		document.getElementById("mySidenav").style.width = "0";
+		}
+
+		// This is for keeping the scroll position when refreshing 
+		$(window).scroll(function() {
+  			sessionStorage.scrollTop = $(this).scrollTop();
+		});
+		$(document).ready(function() {
+  			if (sessionStorage.scrollTop != "undefined") {
+    			$(window).scrollTop(sessionStorage.scrollTop);
+  			}
+		});
+
+		// Function to display a patient's info when user opens popup window
+		function displayPatientInfo(id, PSA, prostate_vol, lesion_size, sector, PIRADS_score, GLEASON_score) {
+			var modalHeader = document.getElementById('modalHeader');
+			var myHeader = document.createElement('h2');
+			myHeader.id = "myHeader";
+			myHeader.innerHTML = 'Patient #' + id;
+			modalHeader.appendChild(myHeader);
+
+			var modalBody = document.getElementById('modalBody');
+			var patientImage = document.createElement('img');
+			patientImage.src = "{% static 'patients/images/patient.jpg' %}";
+			patientImage.alt = "Patient Image";
+			patientImage.style = "width:200px;height:180px;";
+
+			var patientInfo = document.createElement('ul');
+			patientInfo.innerHTML =  
+					'<li><p>PSA (Prostate-Sepcific Antigen): ' + PSA + ' </p></li>'
+      				+ '<li><p>Prostate volume: ' + prostate_vol + '</p></li>'
+      				+ '<li><p>Prostate tumor size: ' + lesion_size + '</p></li>'
+      				+ '<li><p>Sector: ' + sector + '</p></li>'
+      				+ '<li><p>PIRADS score: ' + PIRADS_score + '</p></li>'
+      				+ '<li><p>GLEASON score: ' + GLEASON_score + '</p></li>';
+      		modalBody.appendChild(patientImage);
+      		modalBody.appendChild(patientInfo);
+		}
+
+		// Function to clear a patient's info when user closes popup window 
+		function clearPatientInfo() {
+			var modalBody = document.getElementById('modalBody');
+			while (modalBody.hasChildNodes()) 
+        		modalBody.removeChild(modalBody.firstChild);
+
+        	var myHeader = document.getElementById("myHeader");
+        	if (myHeader)
+				myHeader.parentNode.removeChild(myHeader);
+		}
+		// Testing
+		//displayPatientInfo(1, 9.3, 49.0, 1.5, 23, 7, 8);
+		//clearPatientInfo();
+	</script>
+
+
+	<script>
+		// Range slider for PSA 
+  		var myL = [];
+  		{% if myMinPSA %}
+  			myL.push({{myMinPSA}});
+  		{% else %}
+  			myL.push(3.1);
+  		{% endif %}
+
+  		{% if myMaxPSA %}
+  			myL.push({{myMaxPSA}});
+  		{% else %}
+  			myL.push(23.5);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range1" ).slider({
+      		range: true,
+      		step: 0.1,
+      		min: 0,
+      		max: 50,
+      		values: myL,
+      		slide: function( event, ui ) {
+        		//$( "#amount" ).val( "$" + ui.values[0].toFixed(1) + " - $" + ui.values[1].toFixed(1) );
+        		$( "#minPSA" ).val(ui.values[0].toFixed(1));
+        		$( "#maxPSA" ).val(ui.values[1].toFixed(1));
+      			}
+    		});
+    		//$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
+      		//	" - $" + $( "#slider-range" ).slider( "values", 1 ) );
+    		$( "#minPSA" ).val($( "#slider-range1" ).slider( "values", 0 ));
+    		$( "#maxPSA" ).val($( "#slider-range1" ).slider( "values", 1 ));
+  		} );
+
+  		// Range slider for prostate volume
+  		var myL2 = [];
+  		{% if myMinProstateVol %}
+  			myL2.push({{myMinProstateVol}});
+  		{% else %}
+  			myL2.push(14.0);
+  		{% endif %}
+
+  		{% if myMaxProstateVol %}
+  			myL2.push({{myMaxProstateVol}});
+  		{% else %}
+  			myL2.push(64.0);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range2" ).slider({
+      		range: true,
+      		step: 0.1,
+      		min: 0,
+      		max: 100,
+      		values: myL2,
+      		slide: function( event, ui ) {
+        		$( "#minProstateVol" ).val(ui.values[0].toFixed(1));
+        		$( "#maxProstateVol" ).val(ui.values[1].toFixed(1));
+      			}
+    		});
+    		$( "#minProstateVol" ).val($( "#slider-range2" ).slider( "values", 0 ));
+    		$( "#maxProstateVol" ).val($( "#slider-range2" ).slider( "values", 1 ));
+  		} );
+
+  		// Range slider for lesion size
+  		var myL3 = [];
+  		{% if myMinLesionSize %}
+  			myL3.push({{myMinLesionSize}});
+  		{% else %}
+  			myL3.push(0.5);
+  		{% endif %}
+
+  		{% if myMaxLesionSize %}
+  			myL3.push({{myMaxLesionSize}});
+  		{% else %}
+  			myL3.push(5.0);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range3" ).slider({
+      		range: true,
+      		step: 0.1,
+      		min: 0,
+      		max: 10,
+      		values: myL3,
+      		slide: function( event, ui ) {
+        		$( "#minLesionSize" ).val(ui.values[0].toFixed(1));
+        		$( "#maxLesionSize" ).val(ui.values[1].toFixed(1));
+      			}
+    		});
+    		$( "#minLesionSize" ).val($( "#slider-range3" ).slider( "values", 0 ));
+    		$( "#maxLesionSize" ).val($( "#slider-range3" ).slider( "values", 1 ));
+  		} );
+
+  		// Range slider for sector
+  		var myL4 = [];
+  		{% if myMinSector %}
+  			myL4.push({{myMinSector}});
+  		{% else %}
+  			myL4.push(9);
+  		{% endif %}
+
+  		{% if myMaxSector %}
+  			myL4.push({{myMaxSector}});
+  		{% else %}
+  			myL4.push(36);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range4" ).slider({
+      		range: true,
+      		step: 1,
+      		min: 1,
+      		max: 39,
+      		values: myL4,
+      		slide: function( event, ui ) {
+        		$( "#minSector" ).val(ui.values[0]);
+        		$( "#maxSector" ).val(ui.values[1]);
+      			}
+    		});
+    		$( "#minSector" ).val($( "#slider-range4" ).slider( "values", 0 ));
+    		$( "#maxSector" ).val($( "#slider-range4" ).slider( "values", 1 ));
+  		} );
+
+  		// Range slider for PIRADS score
+  		var myL5 = [];
+  		{% if myMinPIRADSscore %}
+  			myL5.push({{myMinPIRADSscore}});
+  		{% else %}
+  			myL5.push(2);
+  		{% endif %}
+
+  		{% if myMaxPIRADSscore %}
+  			myL5.push({{myMaxPIRADSscore}});
+  		{% else %}
+  			myL5.push(5);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range5" ).slider({
+      		range: true,
+      		step: 1,
+      		min: 1,
+      		max: 10,
+      		values: myL5,
+      		slide: function( event, ui ) {
+        		$( "#minPIRADSscore" ).val(ui.values[0]);
+        		$( "#maxPIRADSscore" ).val(ui.values[1]);
+      			}
+    		});
+    		$( "#minPIRADSscore" ).val($( "#slider-range5" ).slider( "values", 0 ));
+    		$( "#maxPIRADSscore" ).val($( "#slider-range5" ).slider( "values", 1 ));
+  		} );
+
+  		// Range slider for GLEASON score
+  		var myL6 = [];
+  		{% if myMinGLEASONscore %}
+  			myL6.push({{myMinGLEASONscore}});
+  		{% else %}
+  			myL6.push(6);
+  		{% endif %}
+
+  		{% if myMaxGLEASONscore %}
+  			myL6.push({{myMaxGLEASONscore}});
+  		{% else %}
+  			myL6.push(9);
+  		{% endif %}
+
+  		$( function() {
+    		$( "#slider-range6" ).slider({
+      		range: true,
+      		step: 1,
+      		min: 1,
+      		max: 10,
+      		values: myL6,
+      		slide: function( event, ui ) {
+        		$( "#minGLEASONscore" ).val(ui.values[0]);
+        		$( "#maxGLEASONscore" ).val(ui.values[1]);
+      			}
+    		});
+    		$( "#minGLEASONscore" ).val($( "#slider-range6" ).slider( "values", 0 ));
+    		$( "#maxGLEASONscore" ).val($( "#slider-range6" ).slider( "values", 1 ));
+  		} );
+  	</script>
+
+
+	<script>
+		// Graph for PSA 
+		var x1 = [];
+		var y1 = [];
+		{% for i in patientList %}
+			x1.push({{i.id}});
+			y1.push({{i.PSA}});
+		{% endfor %}
+
+		$(function () {
+    		var chart = Highcharts.chart('container1', {
+
+        		title: {
+            		text: 'PSAs of patients by ID'
+        		},
+
+        		subtitle: {
+            		text: 'Plain'
+        		},
+
+        		xAxis: {
+        			title: {
+                		text: 'Patient ID'
+            		},
+            		categories: x1
+        		},
+
+        		yAxis: {
+            		title: {
+                		text: 'PSA'
+            		}	
+        		},
+
+        		plotOptions: {
+            		series: {
+                		cursor: 'pointer',
+                		point: {
+                			events: {
+                    			click: function (event) {
+                    				
+                    				{% for i in patientList %}
+										if ({{i.id}} == this.category)
+											displayPatientInfo({{i.id}}, {{i.PSA}}, {{i.prostate_vol}}, {{i.lesion_size}}, {{i.sector}}, {{i.PIRADS_score}}, {{i.GLEASON_score}});
+									{% endfor %}
+                    				modal.style.display = "block";
+                    			}
+                			}
+                		}
+            		}
+        		},
+
+        		series: [{
+        			name: 'PSA',
+            		type: 'column',
+            		colorByPoint: true,
+            		data: y1,
+            		showInLegend: false
+        		}]
+
+    		});
+
+
+    		$('#plain').click(function () {
+        		chart.update({
+            		chart: {
+                		inverted: false,
+                		polar: false
+            		},
+            		subtitle: {
+                		text: 'Plain'
+            		},
+            		xAxis: {
+        				title: {
+                			text: 'Patient ID'
+            			}
+        			},
+        			yAxis: {
+            			title: {
+                			text: 'PSA'
+            			}	
+        			}
+        		});
+    		});
+
+    		$('#inverted').click(function () {
+        		chart.update({
+            		chart: {
+                		inverted: true,
+                		polar: false
+            		},
+            		subtitle: {
+                		text: 'Inverted'
+            		},
+            		xAxis: {
+        				title: {
+                			text: 'Patient ID'
+            			}
+        			},
+        			yAxis: {
+            			title: {
+                			text: 'PSA'
+            			}	
+        			}
+        		});
+    		});
+
+    		$('#polar').click(function () {
+        		chart.update({
+            		chart: {
+                		inverted: false,
+                		polar: true
+            		},
+            		subtitle: {
+                		text: 'Polar'
+            		},
+            		xAxis: {
+        				title: {
+                			text: ''
+            			}
+        			},
+        			yAxis: {
+            			title: {
+                			text: ''
+            			}	
+        			}
+
+        		});
+    		});
+		}); 
+
+		// Graph for Prostate Vol 
+		var x2 = [];
+		var y2 = [];
+		{% for i in patientList %}
+			x2.push({{i.id}});
+			y2.push({{i.prostate_vol}});
+		{% endfor %}
+
+		$(function () {
+    		// Set up the chart
+    		var chart = new Highcharts.Chart({
+        		chart: {
+            		renderTo: 'container2',
+            		type: 'column',
+            		options3d: {
+                		enabled: true,
+                		alpha: 15,
+                		beta: 15,
+                		depth: 50,
+                		viewDistance: 25
+            		}
+        		},
+        		title: {
+            		text: 'Prostate Volume of Patients by ID'
+        		},
+        		subtitle: {
+            		text: 'Dynamic view (dragging the sliders below)'
+        		},
+
+        		xAxis: {
+        			title: {
+                		text: 'Patient ID'
+            		},
+            		categories: x2
+        		},
+
+        		yAxis: {
+            		title: {
+                		text: 'Prostate Volume'
+            		}	
+        		},
+
+        		plotOptions: {
+            		column: {
+                		depth: 25
+            		},
+            		series: {
+                		cursor: 'pointer',
+                		point: {
+                			events: {
+                    			click: function (event) {		
+                    				{% for i in patientList %}
+										if ({{i.id}} == this.category)
+											displayPatientInfo({{i.id}}, {{i.PSA}}, {{i.prostate_vol}}, {{i.lesion_size}}, {{i.sector}}, {{i.PIRADS_score}}, {{i.GLEASON_score}});
+									{% endfor %}
+                    				modal.style.display = "block";
+                    			}
+                			}
+                		}
+            		}
+
+        		},
+        		series: [{
+        			name: 'Prostate Vol',
+            		data: y2
+        		}]
+    		});
+
+    		function showValues() {
+        		$('#alpha-value').html(chart.options.chart.options3d.alpha);
+        		$('#beta-value').html(chart.options.chart.options3d.beta);
+        		$('#depth-value').html(chart.options.chart.options3d.depth);
+    		}
+
+    		// Activate the sliders
+    		$('#sliders input').on('input change', function () {
+        		chart.options.chart.options3d[this.id] = this.value;
+        		showValues();
+        		chart.redraw(false);
+    		});
+
+    		showValues();
+		});
+
+		// Pie chart for Sector 
+		var mySectorList = []
+		{% for i in sectorList %}
+			mySectorList.push(['Sector ' + {{i.0}}, {{i.1}} ]);
+		{% endfor %}
+		//console.log(a);
+		$(function () {
+    		Highcharts.chart('container3', {
+        		chart: {
+            		type: 'pie',
+            		options3d: {
+                		enabled: true,
+                		alpha: 45,
+                		beta: 0
+            		}
+        		},
+        		title: {
+            		text: 'Patient Counts by Tumor Sector'
+        		},
+        		tooltip: {
+            		pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        		},
+        		plotOptions: {
+            		pie: {
+                		allowPointSelect: true,
+                		cursor: 'pointer',
+                		depth: 35,
+                		dataLabels: {
+                    		enabled: true,
+                    		format: '{point.name}'
+                		}
+            		}
+        		},
+        		series: [{
+            		type: 'pie',
+            		name: 'Patients',
+            		data: mySectorList
+        		}]
+    		});
+		});
+
+		// Bubble chart for PSA, Prostate Vol and Lesion_size
+		$(function () {
+    		var bubbleChart = Highcharts.chart('container4', {
+
+        		chart: {
+            		type: 'bubble',
+            		plotBorderWidth: 1,
+            		zoomType: 'xy'
+        		},
+
+        		title: {
+            		text: 'Correlation between (PSA, Prostate Vol) and Prostate Tumor Size'
+        		},
+
+        		subtitle: {
+            		text: 'Zoomable graph (by drawing a rectangle)'
+        		},
+
+        		xAxis: {
+            		gridLineWidth: 1
+        		},
+
+        		yAxis: {
+            		startOnTick: false,
+            		endOnTick: false
+        		},
+
+        		plotOptions: {
+            		series: {
+                		cursor: 'pointer',
+                		events: {
+                    		click: function (event) {
+                    			//console.log(this.name.substr(8));
+                        		{% for i in patientList %}
+									if ({{i.id}} == this.name.substr(8))
+										displayPatientInfo({{i.id}}, {{i.PSA}}, {{i.prostate_vol}}, {{i.lesion_size}}, {{i.sector}}, {{i.PIRADS_score}}, {{i.GLEASON_score}});
+								{% endfor %}
+                    			modal.style.display = "block";
+                    		}
+                		}
+            		}
+        		}
+
+    		});
+    		
+			{% for i in patientList %}
+    			bubbleChart.addSeries({
+            		name: 'Patient ' + {{i.id}},
+            		data: [[{{i.PSA}}, {{i.prostate_vol}}, {{i.lesion_size}}]],
+            		marker: {
+                		fillColor: {
+                    		radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                    		stops: [
+                        		[0, 'rgba(255,255,255,0.5)'],
+                        		[1, Highcharts.Color(Highcharts.getOptions().colors[{{i.id}}%11]).setOpacity(0.5).get('rgba')]
+                    		]
+                		}
+            		}
+        		});
+        	{% endfor %}
+        	
+		});
+	</script>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
